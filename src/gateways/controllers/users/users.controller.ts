@@ -1,3 +1,5 @@
+import { User } from '@/database/core/user.entity';
+import { UsersService } from '@/users/users.service';
 import {
     Controller,
     Get,
@@ -8,8 +10,6 @@ import {
     Delete,
     NotFoundException,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { User } from './user.entity';
 
 @Controller('users')
 export class UsersController {
@@ -23,7 +23,7 @@ export class UsersController {
 
     //get user by id
     @Get(':id')
-    async findOne(@Param('id') id: number): Promise<User> {
+    async findOne(@Param('id') id: string): Promise<User> {
         const user = await this.usersService.findOne(id);
         if (!user) {
             throw new NotFoundException('User does not exist!');
@@ -40,13 +40,13 @@ export class UsersController {
 
     //update user
     @Put(':id')
-    async update(@Param() id: number, @Body() user: User): Promise<User> {
+    async update(@Param('id') id: string, @Body() user: User): Promise<User> {
         return this.usersService.update(id, user);
     }
 
     //delete user
-    @Delete('id')
-    async delete(@Param() id: number): Promise<any> {
+    @Delete(':id')
+    async delete(@Param('id') id: string): Promise<any> {
         //handle error if user does not exist
         const user = await this.usersService.findOne(id);
         if (!user) {

@@ -1,26 +1,49 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { join } from 'path';
+import { AuthModule } from './frameworks/auth/auth.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { CloudinaryService } from './cloudinary.service';
+import { ImageController } from './image.controller';
+import { ControllersModule } from './gateways/controllers/controllers.module';
 
 @Module({
     imports: [
-        ConfigModule.forRoot(),
-        UsersModule,
-        TypeOrmModule.forRoot({
-            type: process.env.DB_TYPE as any,
-            host: process.env.PG_HOST,
-            port: parseInt(process.env.PG_PORT),
-            username: process.env.PG_USER,
-            password: process.env.PG_PASSWORD,
-            database: process.env.PG_DB,
-            entities: [__dirname + '/**/*.entity{.ts,.js}'],
-            synchronize: true,
+        ConfigModule.forRoot({
+            isGlobal: true,
         }),
+        GraphQLModule.forRoot<ApolloDriverConfig>({
+            driver: ApolloDriver,
+            autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+            context: ({ req, res }) => ({ req, res }),
+        }),
+        TypeOrmModule.forRoot({
+            type: process.env.DB_TYPE as 'postgres',
+            host: process.env.DB_HOST,
+            port: parseInt(process.env.DB_PORT, 10),
+            username: process.env.DB_USERNAME,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
+            entities: [__dirname + '/**/*.entity{.ts,.js}'],
+            logging: true,
+            synchronize: true,
+
+            // synchronize: false,
+            // migrationsTableName: 'typeorm_migrations',
+            // migrationsRun: false,
+        }),
+        MulterModule.register({
+            dest: './uploads', // Destination folder for uploaded files
+        }),
+        ControllersModule,
+        AuthModule,
+        // UsersModule,
+        // ProductsModule,
     ],
-    controllers: [AppController],
-    providers: [AppService],
+    controllers: [ImageController],
+    providers: [CloudinaryService],
 })
 export class AppModule {}

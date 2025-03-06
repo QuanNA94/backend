@@ -1,4 +1,4 @@
-{
+{ 
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,
@@ -16,6 +16,20 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@domain/*": [
+        "src/domain/*"
+      ],
+      "@frameworks/*": [
+        "src/frameworks/*"
+      ],
+      "@gateways/*": [
+        "src/gateways/*"
+      ]
+    }
   }
 }
