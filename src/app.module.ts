@@ -1,15 +1,14 @@
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { join } from 'path';
-import { AuthModule } from './frameworks/auth/auth.module';
 import { MulterModule } from '@nestjs/platform-express';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { join } from 'path';
 import { CloudinaryService } from './cloudinary.service';
-import { ImageController } from './image.controller';
+import { AuthModule } from './frameworks/auth/auth.module';
 import { ControllersModule } from './gateways/controllers/controllers.module';
-
+import { ImageController } from './image.controller';
 @Module({
     imports: [
         ConfigModule.forRoot({
@@ -40,8 +39,6 @@ import { ControllersModule } from './gateways/controllers/controllers.module';
         }),
         ControllersModule,
         AuthModule,
-        // UsersModule,
-        // ProductsModule,
     ],
     controllers: [ImageController],
     providers: [CloudinaryService],

@@ -7,9 +7,9 @@ import {
     Post,
     Put,
 } from '@nestjs/common';
-import { Product } from '@/modules/pet-store/products/entities/product.entity';
 import { CreateProductDto } from './dtos/create-product.input';
-import { ProductsService } from '@/modules/pet-store/products/products.service';
+import { ProductsService } from '@/modules/coffee-store/products/products.service';
+import { Product } from '@/modules/coffee-store/products/entities/product.entity';
 
 @Controller('products')
 export class ProductsController {

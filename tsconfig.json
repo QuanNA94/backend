@@ -21,6 +21,9 @@
       "@/*": [
         "src/*"
       ],
+      "@module/*": [
+        "src/modules/*"
+      ],
       "@domain/*": [
         "src/domain/*"
       ],

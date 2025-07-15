@@ -3,35 +3,116 @@
 # ------------------------------------------------------
 
 type User {
+  id: String!
   username: String!
   email: String!
   password: String!
   name: String!
+  resetToken: String!
+  role: UserRole!
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  GUEST
 }
 
 type AuthResponse {
   access_token: String!
 }
 
-type Product {
+type Cart {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type Coffee {
+  id: ID!
   name: String!
-  imgUrl: String!
+  description: String!
   price: Float!
-  discount: Float!
-  rating: Float!
-  reviewsCount: Float!
+  stock: Float!
+}
+
+type CoffeeOrder {
+  id: ID!
+  user: User!
+  coffee: Coffee!
+  quantity: Float!
+  totalPrice: Float!
+  createdAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type ProductCategory {
+  id: String!
+  name: String!
+  description: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  products: [Product!]
+}
+
+type Product {
+  id: String!
+  name: String!
+  imgUrl: String
+  price: Float!
+  discount: Float
+  rating: Int
+  reviewsCount: Int
+  description: String
+  quantity: Float
+  categoryId: String
+  isFeatured: Boolean!
+  salesCount: Int!
+  category: ProductCategory
+}
+
+type ProductFavorite {
+  id: String!
+  productId: String!
+  userId: String!
+  isFavorite: Boolean!
+  createdAt: DateTime!
+}
+
+type PaymentVerificationResponse {
+  success: Boolean!
+  resultCode: Float!
+  message: String!
 }
 
 type Query {
-  products: [Product!]!
+  coffeeStore_products: [Product!]!
+  coffeeStore_product_by_id(id: String!): Product!
+  getFeaturedProducts: [Product!]!
+  getBestSellerProducts(limit: Int): [Product!]!
   users: [User!]!
   currentUser: User!
+  getCoffeeOrdersByUser(userId: String!): [CoffeeOrder!]!
+  verifyMomoPayment(orderId: String!): PaymentVerificationResponse!
+  cart(id: Int!): Cart!
 }
 
 type Mutation {
   createProduct(createProductInput: CreateProductDto!): Product!
+  deleteProduct(productId: String!): Product!
+  setProductFeatured(productId: String!, isFeatured: Boolean!): Product!
+  toggleFavoriteProduct(userId: String!, productId: String!): ProductFavorite
   createUser(createUserInput: CreateUserInput!): User!
+  createCoffeeOrder(createCoffeeOrderInput: CreateCoffeeOrderInput!): CoffeeOrder!
+  createCart(createCartInput: CreateCartInput!): Cart!
+  updateCart(updateCartInput: UpdateCartInput!): Cart!
+  removeCart(id: Int!): Cart!
   login(authInput: AuthInput!): AuthResponse!
+  resetPassword(token: String!, newPassword: String!): Boolean!
+  forgotPassword(email: String!): Boolean!
 }
 
 input CreateProductDto {
@@ -41,13 +122,34 @@ input CreateProductDto {
   imgUrl: String!
   rating: Float
   reviewsCount: Int
+  description: String
+  quantity: Float
+  isFeatured: Boolean! = false
 }
 
 input CreateUserInput {
   username: String!
   email: String!
-  password: String!
   name: String!
+  password: String!
+  role: UserRole!
+}
+
+input CreateCoffeeOrderInput {
+  userId: String!
+  coffeeId: Float!
+  quantity: Float!
+}
+
+input CreateCartInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateCartInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }
 
 input AuthInput {

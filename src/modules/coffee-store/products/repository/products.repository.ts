@@ -19,7 +19,12 @@ export class ProductsRepository extends Repository<Product> {
         return this.save(product);
     }
 
-    async deleteById(id: string): Promise<void> {
+    async deleteById(id: string): Promise<Product> {
+        const product = await this.findOne({ where: { id } });
+        if (!product) {
+            throw new Error(`Product with ID ${id} not found`);
+        }
         await this.delete(id);
+        return product;
     }
 }

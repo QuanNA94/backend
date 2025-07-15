@@ -6,7 +6,7 @@ import { AuthenticationError } from '@nestjs/apollo';
 import { JwtAuthGuard } from '@/gateways/guards/jwt-auth-guard';
 import { UseGuards } from '@nestjs/common';
 
-@Resolver(of => User)
+@Resolver(() => User)
 export class UsersResolver {
     constructor(private readonly usersService: UsersService) {}
 
@@ -19,23 +19,14 @@ export class UsersResolver {
     @Query(() => User)
     @UseGuards(JwtAuthGuard)
     async currentUser(@Context() context): Promise<User> {
-        console.log("🔍 Headers:", context.req.headers);
-        console.log("🔍 Token:", context.req.headers.authorization);
-        console.log("🔍 User before guard:", context.req.user);
+        console.log('User from context:', context.req.user);
+        console.log('Headers:', context.req.headers);
 
-        if (!context.req.user) {
-            throw new AuthenticationError("User not authenticated");
+        if (!context.req || !context.req.user) {
+            throw new AuthenticationError('User not authenticated');
         }
+
         return context.req.user;
-
-        // const user = context.req.user; // Assuming user info is attached to the request
-
-        // console.log('user', user);
-
-        // if (!user) {
-        //     throw new AuthenticationError('User not authenticated');
-        // }
-        // return user;
     }
 
     @Mutation(() => User)
