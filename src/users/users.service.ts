@@ -4,14 +4,15 @@ import {
     Inject,
     Injectable,
 } from '@nestjs/common';
-import {
-    USER_REPOSITORY,
-    UsersRepository,
-} from 'src/domain/repositories/users.repository';
+
 import { User } from '../database/core/user.entity';
 import { CreateUserInput } from '../gateways/controllers/users/dtos/create-user.input';
 import * as bcrypt from 'bcryptjs';
 import { UserRole } from '@/domain/enums/roles.enum';
+import {
+    USER_REPOSITORY,
+    UsersRepository,
+} from '@/domain/repositories/users.repository';
 
 @Injectable()
 export class UsersService {
@@ -67,7 +68,7 @@ export class UsersService {
         // Lưu user vào database
         try {
             return await this.userRepository.save(user);
-        } catch (error) {
+        } catch {
             throw new BadRequestException('Failed to create user');
         }
     }
