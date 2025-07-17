@@ -45,8 +45,8 @@ jobs:
     - name: Deploy to Staging
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.DOCKER_HUB_USERNAME.USERNAME }}
+        host: ${{ secrets.PROD_HOST }}
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /var/www/nestapp
@@ -67,7 +67,7 @@ jobs:
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.PROD_HOST }}
-        username: ${{ secrets.DOCKER_HUB_USERNAME.USERNAME }}
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /var/www/nestapp
