@@ -1,0 +1,77 @@
+# workflow
+name: Deploy to Staging
+
+# Trigger events
+on:
+  push:
+    branches: [ main, staging ]
+  pull_request:
+    branches: [ main, staging ]
+
+# Jobs
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    # - name: Run tests
+    #   run: npm test
+
+    # - name: Run e2e tests
+    #   run: npm run test:e2e
+
+    - name: Build
+      run: npm run build
+
+  cd-staging:
+    needs: ci
+    if: github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Deploy to Staging
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.DOCKER_HUB_USERNAME.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /var/www/nestapp
+          git pull origin staging
+          npm ci
+          npm run build
+          pm2 restart nestapp
+
+  cd-production:
+    needs: ci
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Deploy to Production
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.PROD_HOST }}
+        username: ${{ secrets.DOCKER_HUB_USERNAME.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /var/www/nestapp
+          git pull origin main
+          npm ci
+          npm run build
+          pm2 restart nestapp
