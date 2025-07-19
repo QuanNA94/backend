@@ -13,7 +13,7 @@ import * as Mail from 'nodemailer/lib/mailer';
 @Injectable()
 export class EmailService {
     private readonly logger = new Logger(EmailService.name);
-    private nodemailerTransport: Mail;
+    private readonly nodemailerTransport: Mail;
 
     constructor(
         private readonly jwtService: JwtService,

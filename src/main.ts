@@ -1,25 +1,21 @@
-// loading config before anything
-import { loadConfig } from './shared/utils/config';
-loadConfig();
-
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-
-import * as dotenv from 'dotenv';
 import { Logger } from '@nestjs/common';
-
-// Another way of loading env file, use as per your preference
-const environment = process.env.NODE_ENV || 'local';
-dotenv.config({ path: `${environment}.env` });
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
-    app.useLogger(new Logger());
-    app.enableCors();
+    const logger = new Logger('Bootstrap');
+
+    // Cấu hình CORS
+    app.enableCors({
+        origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+        credentials: true,
+    });
 
     const port = process.env.PORT || 3000;
     await app.listen(port);
-    // console.log('NODE_ENV:', process.env.NODE_ENV || 'local');
-    console.log(`Application is running on: http://localhost:${port}/graphql`);
+    logger.log(`Application is running on: ${await app.getUrl()}`);
 }
+
 bootstrap();
