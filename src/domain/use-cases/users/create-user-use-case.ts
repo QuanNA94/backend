@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { hash } from 'bcryptjs';
 import { User } from '../../../database/core/user.entity';
 import { UsersRepository } from 'src/domain/repositories/users.repository';
-import { UsersService } from 'src/users/users.service';
 import { BaseUseCase } from '../base-use-case.interface';
+import { UsersService } from '@/users/users.service';
 
 @Injectable()
 export class CreateUserUseCase implements BaseUseCase {
