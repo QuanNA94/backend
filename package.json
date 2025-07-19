@@ -5,9 +5,6 @@
     "author": "",
     "private": true,
     "license": "UNLICENSED",
-    "_moduleAliases": {
-        "@": "dist"
-    },
     "scripts": {
         "build": "nest build",
         "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -24,7 +21,8 @@
         "migration:create": "cross-var ts-node node_modules/typeorm/cli.js migration:create src/database/migrations/$npm_config_name",
         "migrate": "ts-node node_modules/typeorm/cli.js migration:run -d src/shared/utils/data-source.ts",
         "migration:down": "ts-node node_modules/typeorm/cli.js migration:revert -d src/shared/utils/data-source.ts",
-        "migration:show": "ts-node node_modules/typeorm/cli.js migration:show -d src/shared/utils/data-source.ts"
+        "migration:show": "ts-node node_modules/typeorm/cli.js migration:show -d src/shared/utils/data-source.ts",
+        "postinstall": "npm run build && link-module-alias"
     },
     "dependencies": {
         "@apollo/server": "^4.0.0",
@@ -83,6 +81,15 @@
         "ts-loader": "^9.4.3",
         "ts-node": "^10.9.1",
         "tsconfig-paths": "^4.2.0",
-        "typescript": "^5.1.3"
+        "typescript": "^5.1.3",
+        "link-module-alias": "^1.2.0"
+    },
+    "_moduleAliasIgnoreWarning": true,
+    "_moduleAliases": {
+        "src": "dist",
+        "modules": "dist/modules",
+        "domain": "dist/domain",
+        "frameworks": "dist/frameworks",
+        "gateways": "dist/gateways"
     }
 }
