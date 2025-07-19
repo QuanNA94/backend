@@ -7,14 +7,18 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthenticateUseCase } from '@/domain/use-cases/auth/authenticate-user-use-case';
 import { AuthResolver } from '../../authentication/auth.resolver';
 import { EmailModule } from '@/modules/email/email.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
     imports: [
         EmailModule,
-        JwtModule.register({
-            secret: process.env.JWT_SECRET || 'default_secret',
-            signOptions: { expiresIn: '1h' },
+        JwtModule.registerAsync({
+            imports: [ConfigModule],
+            useFactory: async (configService: ConfigService) => ({
+                secret: configService.get<string>('JWT_SECRET'),
+                signOptions: { expiresIn: '1h' },
+            }),
+            inject: [ConfigService],
         }),
         UsersModule, // Import UsersModule để dùng UsersService
         PassportModule,
